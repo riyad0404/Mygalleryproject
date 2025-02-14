@@ -1,4 +1,4 @@
-#  PycharmProjectsmy\_gallery - Interactive Cyberpunk Art & Audio Gallery
+#   - Interactive Cyberpunk Art & Audio Gallery
 
 ### **Author:** Riyad Moukhliss
 
