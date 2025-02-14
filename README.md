@@ -32,14 +32,8 @@ cd my_gallery
 Run the application:
 python app1.py
 Open your web browser and go to:
-sh
-Copier
-Modifier
 http://127.0.0.1:5000/
 Directory Structure
-lua
-Copier
-Modifier
 my_gallery/  
 │-- static1/  
 │   ├── uploads1/  
@@ -78,6 +72,8 @@ Add user authentication for file management.
 Support more file formats and advanced audio mixing.
 Implement an AI-powered art generator for dynamic designs.
 ✨ Enjoy your cyberpunk art experience!
+
+
 
 
 
