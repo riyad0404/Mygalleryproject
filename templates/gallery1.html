@@ -1,0 +1,630 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Gallery</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+
+</head>
+<body>
+<div id="loading-screen">
+    <div class="loading-text">
+        <span id="loading-message">INITIALIZING SYSTEM...</span>
+        <br>
+        <span id="loading-subtext">[ STAND BY ]</span>
+    </div>
+</div>
+
+<div id="cyberclock-container">
+    <div id="cyberclock"></div>
+</div>
+
+<canvas id="particleCanvas"></canvas>
+
+<audio id="backgroundMusic" loop>
+    <source src="{{ url_for('static', filename='cyberpunk-theme.mp3') }}" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+<button id="musicToggle" class="btn">🎵 Play Music</button>
+
+    <div class="container">
+    <h1>Gallery</h1>
+    <div class="nav">
+        <a href="{{ url_for('index') }}" class="btn">Home</a>
+        <a href="{{ url_for('upload') }}" class="btn">Upload Files</a>
+        <a href="{{ url_for('art_tool') }}" class="btn">Interactive Art Tool</a>
+        <button onclick="startSlideshow()" class="btn">Slideshow</button>
+        <a href="{{ url_for('merge_audios') }}" class="btn">Merge Audios</a>
+        <select id="theme-selector" class="btn" onchange="changeTheme(this.value)">
+    <option value="default">Cyberpunk Teal</option>
+    <option value="blue">Cyberpunk Blue</option>
+    <option value="pink">Neon Pink</option>
+    <option value="green">Tech Green</option>
+</select>
+
+    </div>
+
+    <!-- Image Gallery Section -->
+    <h2>Images</h2>
+    <div class="gallery images-gallery">
+        {% for file in files %}
+            {% if file[2] == 'image' %}
+                <div class="card">
+                    <img src="{{ url_for('uploaded_file', filetype='images1', filename=file[1].split('/')[-1]) }}" alt="Image" class="thumbnail">
+                    <a href="{{ url_for('uploaded_file', filetype='images1', filename=file[1].split('/')[-1]) }}"
+   download class="download-arrow">
+    ⬇
+</a>
+
+                    <div class="card-actions">
+                        <select class="filter-dropdown" onchange="applyFilter('{{ file[1].split('/')[-1] }}', this.value)">
+                            <option value="">Select Filter</option>
+                            <option value="grayscale">Grayscale</option>
+                            <option value="blur">Blur</option>
+                            <option value="invert">Invert</option>
+                            <option value="contour">Contour</option>
+                            <option value="emboss">Emboss</option>
+                            <option value="sharpen">Sharpen</option>
+                            <option value="smooth">Smooth</option>
+                            <option value="edge_enhance">Edge Enhance</option>
+                        </select>
+                        <button onclick="resizeImage('{{ file[1].split('/')[-1] }}')" class="btn">Resize</button>
+                        <button onclick="flipImage('{{ file[1].split('/')[-1] }}', 'horizontal')" class="btn">Flip H</button>
+                        <button onclick="flipImage('{{ file[1].split('/')[-1] }}', 'vertical')" class="btn">Flip V</button>
+                        <button onclick="rotateImage('{{ file[1].split('/')[-1] }}', 90)" class="btn">Rotate 90°</button>
+                        <button class="delete-button" onclick="deleteItem({{ file[0] }})">Delete</button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+  <!-- Audio Gallery Section -->
+<h2>Audios</h2>
+<div class="audio-gallery">
+    {% for file in files %}
+        {% if file[2] == 'audio' %}
+            <div class="audio-card">
+    <p>{{ file[1].split('/')[-1] }}</p>
+                <a href="{{ url_for('uploaded_file', filetype='audios1', filename=file[1].split('/')[-1]) }}"
+   download class="download-arrow audio-download">
+    ⬇
+</a>
+
+
+    <!-- Audio Player & Controls -->
+    <div class="custom-audio-player">
+        <audio id="audio-{{ file[0] }}"
+               src="{{ url_for('uploaded_file', filetype='audios1', filename=file[1].split('/')[-1]) }}"
+               onplay="startAudioVisualization('audio-{{ file[0] }}', 'waveformCanvas-{{ file[0] }}')"
+               ontimeupdate="updateProgress('audio-{{ file[0] }}', 'progress-{{ file[0] }}')">
+        </audio>
+
+        <button onclick="togglePlayPause('audio-{{ file[0] }}', this)">Play</button>
+
+        <!-- Audio Controls (Progress & Volume) -->
+        <div class="audio-controls">
+            <div class="audio-control-dot" onclick="showSlider('progress-{{ file[0] }}')"></div>
+            <div id="progress-{{ file[0] }}" class="audio-slider">
+                <input type="range" value="0" min="0" step="1" oninput="seekAudio('audio-{{ file[0] }}', this.value)">
+            </div>
+
+            <div class="audio-control-dot" onclick="showSlider('volume-{{ file[0] }}')"></div>
+            <div id="volume-{{ file[0] }}" class="audio-slider">
+                <input type="range" min="0" max="1" step="0.1" value="1" oninput="setVolume('audio-{{ file[0] }}', this.value)">
+            </div>
+        </div>
+
+        <!-- Waveform Visualization (Now Below Controls) -->
+        <canvas id="waveformCanvas-{{ file[0] }}" width="300" height="50"></canvas>
+    </div>
+
+    <!-- Remix Section -->
+    <div class="remix-section">
+        <label for="effect-selector-{{ file[0] }}">Choose Remix Effect:</label>
+        <select id="effect-selector-{{ file[0] }}" class="btn">
+            <option value="speed_up">Speed Up</option>
+            <option value="slow_down">Slow Down</option>
+            <option value="reverb">Reverb</option>
+            <option value="echo">Echo</option>
+            <option value="distortion">Distortion</option>
+        </select>
+        <button class="btn remix-button" onclick="remixAudio('{{ file[1].split('/')[-1] }}', {{ file[0] }})">Remix</button>
+    </div>
+
+    <button class="delete-button" onclick="deleteItem({{ file[0] }})">Delete</button>
+</div>
+
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+
+</div>
+
+
+    <!-- Slideshow -->
+    <div class="slideshow" id="slideshow">
+        <img src="" alt="Slideshow Image" id="slideshow-img">
+        <div class="slideshow-controls">
+            <button onclick="prevSlide()">Previous</button>
+            <button onclick="nextSlide()">Next</button>
+            <button onclick="closeSlideshow()">Close</button>
+        </div>
+    </div>
+<!-- Cyberpunk Delete Confirmation Modal -->
+<div id="delete-modal" class="cyberpunk-modal">
+    <div class="modal-content">
+        <h2>⚠ SYSTEM OVERRIDE</h2>
+        <p id="delete-message">Are you sure you want to DELETE this file? This action is IRREVERSIBLE.</p>
+        <div class="modal-buttons">
+            <button id="confirm-delete" class="btn danger-btn">⚠ DELETE</button>
+            <button id="cancel-delete" class="btn">CANCEL</button>
+        </div>
+    </div>
+</div>
+
+    <script>
+        // Slideshow functionality
+        const slideshow = document.getElementById('slideshow');
+        const slideshowImg = document.getElementById('slideshow-img');
+        let currentSlide = 0;
+        const images = Array.from(document.querySelectorAll('.thumbnail')).map(img => img.src);
+
+        function startSlideshow() {
+            currentSlide = 0;
+            slideshowImg.src = images[currentSlide];
+            slideshow.classList.add('active');
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % images.length;
+            slideshowImg.src = images[currentSlide];
+        }
+
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + images.length) % images.length;
+            slideshowImg.src = images[currentSlide];
+        }
+
+        function closeSlideshow() {
+            slideshow.classList.remove('active');
+        }
+
+        // Resize, Flip, and Rotate functionality
+        function resizeImage(filename) {
+            const newWidth = prompt("Enter new width (in pixels):");
+            const newHeight = prompt("Enter new height (in pixels):");
+            if (newWidth && newHeight) {
+                window.location.href = `/resize_image/${filename}/${newWidth}/${newHeight}`;
+            }
+        }
+
+        function flipImage(filename, direction) {
+            window.location.href = `/flip_image/${filename}/${direction}`;
+        }
+
+        function rotateImage(filename, degrees) {
+            window.location.href = `/rotate_image/${filename}/${degrees}`;
+        }
+
+        // Existing functions
+        function applyFilter(filename, filterName) {
+            if (filterName) {
+                window.location.href = `/apply_filter/${filename}/${filterName}`;
+            }
+        }
+
+
+
+let deleteFileId = null;
+
+function deleteItem(fileId) {
+    deleteFileId = fileId;
+    const modal = document.getElementById("delete-modal");
+    modal.style.display = "flex";  // ✅ Ensure modal is visible
+    modal.style.opacity = "1";  // ✅ Make sure it's not transparent
+}
+
+// Confirm Delete Action
+document.getElementById("confirm-delete").addEventListener("click", function () {
+    if (deleteFileId !== null) {
+        window.location.href = `/delete/${deleteFileId}`;
+    }
+});
+
+// Cancel Delete Action
+document.getElementById("cancel-delete").addEventListener("click", function () {
+    const modal = document.getElementById("delete-modal");
+    modal.style.opacity = "0"; // ✅ Smooth fade-out
+    setTimeout(() => {
+        modal.style.display = "none";  // ✅ Hide modal after fade-out
+    }, 300);
+});
+
+
+
+
+
+
+        function togglePlayPause(audioId, button) {
+    const audio = document.getElementById(audioId);
+    if (audio.paused) {
+        audio.play();
+        button.textContent = "Pause";
+    } else {
+        audio.pause();
+        button.textContent = "Play";
+    }
+}
+
+
+        function seekAudio(audioId, value) {
+            const audio = document.getElementById(audioId);
+            audio.currentTime = (value / 100) * audio.duration;
+        }
+
+        function setVolume(audioId, value) {
+            const audio = document.getElementById(audioId);
+            audio.volume = value;
+        }
+
+        // Show/Hide Sliders
+        function showSlider(sliderId) {
+            const slider = document.getElementById(sliderId);
+            slider.style.display = 'block';
+        }
+        // Background Music Script (Inside existing script section)
+const music = document.getElementById("backgroundMusic");
+const musicToggle = document.getElementById("musicToggle");
+
+musicToggle.addEventListener("click", function() {
+    if (music.paused) {
+        music.play();
+        musicToggle.textContent = "🔇 Pause Music";
+    } else {
+        music.pause();
+        musicToggle.textContent = "🎵 Play Music";
+    }
+});
+
+// Auto-Resume Music if the user has played it before
+document.addEventListener("visibilitychange", function() {
+    if (!document.hidden && !music.paused) {
+        music.play();
+    }
+});
+
+        // Hide sliders when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!event.target.classList.contains('audio-control-dot')) {
+                document.querySelectorAll('.audio-slider').forEach(slider => {
+                    slider.style.display = 'none';
+                });
+            }
+        });
+
+        // Update progress bar as audio plays
+        document.querySelectorAll('audio').forEach(audio => {
+            audio.addEventListener('timeupdate', () => {
+                const progress = document.getElementById(`progress-${audio.id.split('-')[1]}`).querySelector('input');
+                progress.value = (audio.currentTime / audio.duration) * 100;
+            });
+        });
+      // Waveform Visualization + Keep Sliders Working
+function startAudioVisualization(audioId, canvasId) {
+    const audio = document.getElementById(audioId);
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext("2d");
+
+    // Create Audio Context (Avoid Multiple Context Issues)
+    if (!audio.audioCtx) {
+        audio.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        audio.analyser = audio.audioCtx.createAnalyser();
+        audio.source = audio.audioCtx.createMediaElementSource(audio);
+
+        audio.source.connect(audio.analyser);
+        audio.analyser.connect(audio.audioCtx.destination);
+
+        audio.analyser.fftSize = 64; // More detailed visualization
+    }
+
+    const bufferLength = audio.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    function renderWaveform() {
+        if (!audio.paused) {
+            requestAnimationFrame(renderWaveform);
+            audio.analyser.getByteFrequencyData(dataArray);
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ffcc";
+
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = dataArray[i] / 2;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 2;
+            }
+        }
+    }
+
+    if (audio.audioCtx.state === 'suspended') {
+        audio.audioCtx.resume();
+    }
+
+    renderWaveform();
+}
+
+// Keep Progress Bar Working
+function updateProgress(audioId, progressId) {
+    const audio = document.getElementById(audioId);
+    const progressBar = document.getElementById(progressId).querySelector('input');
+    progressBar.value = (audio.currentTime / audio.duration) * 100;
+}
+
+// Seek Audio (Move Progress)
+function seekAudio(audioId, value) {
+    const audio = document.getElementById(audioId);
+    audio.currentTime = (value / 100) * audio.duration;
+}
+
+// Set Volume
+function setVolume(audioId, value) {
+    const audio = document.getElementById(audioId);
+    audio.volume = value;
+}
+
+// Play/Pause Toggle
+function togglePlayPause(audioId, button) {
+    const audio = document.getElementById(audioId);
+    if (audio.paused) {
+        audio.play();
+        button.textContent = "Pause";
+    } else {
+        audio.pause();
+        button.textContent = "Play";
+    }
+}
+function changeTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+}
+
+// Load saved theme on page load
+window.onload = () => {
+    const savedTheme = localStorage.getItem("theme") || "default";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    document.getElementById("theme-selector").value = savedTheme;
+};
+// 🎇 Animated Cyberpunk Particles Background
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+const particles = [];
+const maxParticles = 100;
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 5 + 1;
+        this.speedX = (Math.random() - 0.5) * 2;
+        this.speedY = (Math.random() - 0.5) * 2;
+        this.alpha = Math.random() * 0.8 + 0.2; // Random opacity
+    }
+
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+    }
+
+    draw() {
+        const theme = document.documentElement.getAttribute("data-theme") || "default";
+
+        let color;
+        if (theme === "default") color = "rgba(0, 255, 204,"; // Cyberpunk Teal
+        else if (theme === "blue") color = "rgba(0, 150, 255,"; // Neon Blue
+        else if (theme === "pink") color = "rgba(255, 0, 150,"; // Neon Pink
+        else if (theme === "green") color = "rgba(0, 255, 0,"; // Tech Green
+
+        ctx.globalAlpha = this.alpha;
+        ctx.fillStyle = `${color} ${this.alpha})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+// 🎨 Initialize Particles
+function initParticles() {
+    for (let i = 0; i < maxParticles; i++) {
+        particles.push(new Particle());
+    }
+}
+
+// 🎞 Animation Loop
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+}
+
+// 🖥 Resize Canvas on Window Resize
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// 🚀 Start Animation
+initParticles();
+animateParticles();
+
+// 🌀 Update Particle Colors When Theme Changes
+function updateParticleColors() {
+    particles.forEach(p => p.draw());
+}
+
+// 🔄 Modify Existing changeTheme() Function
+function changeTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+    updateParticleColors();
+}
+function remixAudio(filename, fileId) {
+    const effect = document.getElementById(`effect-selector-${fileId}`).value;
+    window.location.href = `/remix_audio/${filename}/${effect}`;
+}
+// Create the main custom cursor
+const cursor = document.createElement("div");
+cursor.id = "customCursor";
+document.body.appendChild(cursor);
+
+// Ensure cursor appears on page load
+document.addEventListener("DOMContentLoaded", () => {
+    cursor.style.opacity = "1"; // Ensure it's visible
+});
+
+// Move cursor with the mouse
+document.addEventListener("mousemove", (e) => {
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
+    cursor.style.opacity = "1"; // Make sure it's not hidden
+});
+
+// Create neon cursor trail effect
+document.addEventListener("mousemove", (e) => {
+    let trail = document.createElement("div");
+    trail.classList.add("cursor-trail");
+    trail.style.left = `${e.clientX}px`;
+    trail.style.top = `${e.clientY}px`;
+    document.body.appendChild(trail);
+
+    // Remove trail after animation
+    setTimeout(() => trail.remove(), 500);
+});
+
+// Hide cursor when not moving
+let lastMove = Date.now();
+setInterval(() => {
+    if (Date.now() - lastMove > 1000) {
+        cursor.style.opacity = "0";
+    }
+}, 1000);
+
+document.addEventListener("mousemove", () => {
+    cursor.style.opacity = "1";
+    lastMove = Date.now();
+});
+function updateCyberClock() {
+    let now = new Date();
+    let hours = now.getHours().toString().padStart(2, "0");
+    let minutes = now.getMinutes().toString().padStart(2, "0");
+    let seconds = now.getSeconds().toString().padStart(2, "0");
+
+    let timeString = `${hours}:${minutes}:${seconds}`;
+    document.getElementById("cyberclock").textContent = timeString;
+}
+
+// Update the clock every second
+setInterval(updateCyberClock, 1000);
+updateCyberClock(); // Run once on load
+document.addEventListener("DOMContentLoaded", () => {
+    const loadingScreen = document.getElementById("loading-screen");
+    const loadingMessage = document.getElementById("loading-message");
+
+    if (!loadingScreen || !loadingMessage) {
+        console.error("Loading screen elements not found!");
+        return;
+    }
+
+    const messages = [
+        "INITIALIZING SYSTEM...",
+        "ACCESSING DATABASE...",
+        "WARNING: UNAUTHORIZED CONNECTION DETECTED...",
+        "ERROR: SYSTEM BREACH...",
+        "TRACE IN PROGRESS...",
+        "🔥 CRITICAL FAILURE: SHUTTING DOWN..."
+    ];
+
+    let messageIndex = 0;
+
+    function updateLoadingMessage() {
+        if (messageIndex < messages.length) {
+            loadingMessage.textContent = messages[messageIndex]; // Update message
+            messageIndex++;
+            setTimeout(updateLoadingMessage, 1500); // Call itself after 1.5s
+        } else {
+            setTimeout(() => {
+                loadingScreen.style.opacity = "0"; // Smooth fade-out
+                setTimeout(() => {
+                    loadingScreen.style.display = "none"; // Hide completely
+                }, 500);
+            }, 1000);
+        }
+    }
+
+    // Only show the loading screen once per session
+    if (!sessionStorage.getItem("visited")) {
+        sessionStorage.setItem("visited", "true"); // Mark as visited
+        setTimeout(updateLoadingMessage, 1000); // Start message sequence
+    } else {
+        loadingScreen.style.display = "none"; // Hide instantly if already visited
+    }
+
+    // 🛠️ FIX: Ensure Delete Modal Buttons Exist Before Adding Listeners
+    const confirmDelete = document.getElementById("confirm-delete");
+    const cancelDelete = document.getElementById("cancel-delete");
+    const deleteModal = document.getElementById("delete-modal");
+
+    if (confirmDelete && cancelDelete) {
+        confirmDelete.addEventListener("click", function () {
+            if (deleteFileId !== null) {
+                window.location.href = `/delete/${deleteFileId}`;
+            }
+        });
+
+        cancelDelete.addEventListener("click", function () {
+            deleteModal.style.opacity = "0";
+            setTimeout(() => {
+                deleteModal.style.display = "none";
+            }, 300);
+        });
+    } else {
+        console.error("Delete modal buttons not found!");
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+
+
+</body>
+</html>

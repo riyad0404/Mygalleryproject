@@ -1,0 +1,1254 @@
+/* Default Theme (Cyberpunk Teal) */
+:root {
+    --primary-color: #00ffcc;
+    --secondary-color: rgba(0, 255, 204, 0.2);
+    --background-color: linear-gradient(135deg, #1a1a1a, #2c3e50);
+    --text-color: #fff;
+}
+
+/* Cyberpunk Blue */
+[data-theme="blue"] {
+    --primary-color: #00aaff;
+    --secondary-color: rgba(0, 170, 255, 0.2);
+    --background-color: linear-gradient(135deg, #001a33, #00264d);
+    --text-color: #cceeff;
+}
+
+/* Neon Pink */
+[data-theme="pink"] {
+    --primary-color: #ff00ff;
+    --secondary-color: rgba(255, 0, 255, 0.2);
+    --background-color: linear-gradient(135deg, #330033, #660066);
+    --text-color: #ffccff;
+}
+
+/* Tech Green */
+[data-theme="green"] {
+    --primary-color: #00ff00;
+    --secondary-color: rgba(0, 255, 0, 0.2);
+    --background-color: linear-gradient(135deg, #003300, #006600);
+    --text-color: #ccffcc;
+}
+
+/* General Styles */
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+    text-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+}
+
+h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    position: relative;
+}
+
+h2::after {
+    content: "";
+    width: 100px;
+    height: 2px;
+    background: var(--primary-color);
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+/* Navigation */
+.nav {
+    display: flex;
+    justify-content: center;
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1rem;
+    color: var(--text-color);
+    background: var(--secondary-color);
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+}
+
+/* Gallery */
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* Individual Image Cards */
+.card, .audio-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    width: 200px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+/* Slideshow */
+.slideshow {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.slideshow.active {
+    display: flex;
+}
+
+.slideshow img {
+    max-width: 90%;
+    max-height: 90%;
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+}
+
+/* Fix for Waveform Overlapping Audio Controls */
+canvas {
+    width: 100%; /* Make waveform fill the audio card */
+    height: 50px; /* Fixed height for all waveforms */
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 0 10px var(--primary-color);
+    position: relative;
+    z-index: 1;
+    margin-top: 5px;
+}
+
+/* Audio Controls */
+.audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    z-index: 5;
+}
+
+.audio-control-dot {
+    width: 12px;
+    height: 12px;
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.audio-control-dot:hover {
+    transform: scale(1.2);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--primary-color);
+}
+
+/* Sliders */
+.audio-slider {
+    display: none;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    border-radius: 5px;
+    z-index: 3;
+}
+
+/* Show sliders on click */
+.audio-slider.show {
+    display: block;
+}
+
+.audio-slider input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    height: 5px;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.audio-slider input[type="range"]:hover {
+    opacity: 1;
+}
+
+.audio-slider input[type="range"]::-webkit-slider-thumb {
+    background: var(--primary-color);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .gallery {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .gallery {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .gallery {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+/* Image Gallery: Keep 5 Items per Row */
+.images-gallery {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 images per row */
+    gap: 15px;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+/* Ensure Image Cards Stay Properly Sized */
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s;
+    width: 220px; /* Ensure all image cards are same width */
+}
+.card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+/* Fix Audio Gallery Layout */
+.audio-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+}
+/* Ensure Audio Player Fits Inside the Card */
+.custom-audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    width: 100%;
+}
+/* General Button Styles */
+.btn, .delete-button, .filter-dropdown {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: var(--secondary-color);
+    color: var(--text-color);
+}
+
+/* Hover Effect for All Buttons */
+.btn:hover, .delete-button:hover, .filter-dropdown:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+
+/* Specific Fix for Play/Pause Button */
+.custom-audio-player button {
+    background: var(--secondary-color);
+    border: 2px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect for Play/Pause Button */
+.custom-audio-player button:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+
+/* Select Dropdown (Filter Menu) */
+.filter-dropdown {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid var(--primary-color);
+    background: var(--secondary-color);
+    color: var(--text-color);
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Dropdown Hover */
+.filter-dropdown:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+
+/* Dropdown Menu (Fix for Text Visibility) */
+.filter-dropdown option {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+/* Delete Button */
+.delete-button {
+    background: rgba(255, 0, 0, 0.2);
+    border: 2px solid rgba(255, 0, 0, 0.5);
+    color: var(--text-color);
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Delete Button Hover Effect */
+.delete-button:hover {
+    background: rgba(255, 0, 0, 0.4);
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5), 0 0 20px rgba(255, 0, 0, 0.3);
+}
+/* Fix Audio Gallery Layout */
+.audio-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center; /* Center all audio cards */
+    justify-content: center;
+    padding: 20px;
+    width: 100%;
+}
+
+/* Make Audio Cards Wider & Centered */
+.audio-card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    width: 600px; /* Increased width */
+    max-width: 90%;
+}
+
+/* Ensure Audio Player & Controls Fit Properly */
+.custom-audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+    width: 100%;
+}
+
+/* Waveform Should Fit Inside the Audio Card */
+canvas {
+    width: 100%;
+    height: 60px; /* Make it slightly taller */
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 0 10px var(--primary-color);
+    margin-top: 5px;
+}
+/* Center Image & Audio Section Titles */
+h2 {
+    text-align: center;
+    width: 100%;
+    display: block;
+    font-size: 26px;
+    position: relative;
+}
+
+/* Center the Underline */
+h2::after {
+    content: "";
+    width: 100px;
+    height: 2px;
+    background: var(--primary-color);
+    position: absolute;
+    bottom: -5px;
+    left: 50%;  /* Move to center */
+    transform: translateX(-50%);  /* Adjust to align properly */
+    box-shadow: 0 0 10px var(--primary-color);
+}
+/* Fix Audio Card Layout to Prevent Overlapping */
+.audio-card {
+    display: flex;
+    flex-direction: column; /* Stack items vertically */
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Add spacing between elements */
+    width: 600px; /* Keep the width balanced */
+    max-width: 90%;
+    padding-bottom: 15px; /* Extra padding to prevent touching */
+}
+
+/* Ensure Delete Button Stays Below Waveform */
+.audio-card .delete-button {
+    width: 100px; /* Make button smaller for better spacing */
+    margin-top: 10px; /* Add margin to separate it from the waveform */
+}
+/* Slideshow Controls - Centered & Styled */
+.slideshow-controls {
+    position: absolute;
+    bottom: 10px; /* Position under the image */
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px; /* Add spacing between buttons */
+    justify-content: center;
+}
+
+/* Slideshow Control Buttons */
+.slideshow-controls button {
+    background: var(--secondary-color);
+    border: 2px solid var(--primary-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+/* Hover Effect for Slideshow Buttons */
+.slideshow-controls button:hover {
+    background: var(--primary-color);
+    color: #000;
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+/* Smooth Theme Transition */
+* {
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
+}
+
+/* Background Animation */
+body {
+    transition: background 1s ease-in-out;
+}
+
+/* Buttons & Cards Glow Change */
+.btn, .delete-button, .filter-dropdown, .card, .audio-card, .slideshow-controls button {
+    transition: background-color 0.5s ease, color 0.5s ease, box-shadow 0.5s ease, border 0.5s ease;
+}
+
+/* Smooth Theme Change for Slideshow */
+.slideshow img {
+    transition: border-color 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* Smooth Transition for Waveform Glow */
+canvas {
+    transition: box-shadow 0.5s ease;
+}
+
+/* Dropdown Menu Smooth Change */
+.filter-dropdown option {
+    transition: background-color 0.5s ease, color 0.5s ease;
+}
+/* Apply Glowing Black Effect to Both Dropdowns */
+.filter-dropdown, #theme-selector {
+    background: black;
+    color: var(--text-color);
+    border: 2px solid var(--primary-color);
+    position: relative;
+    box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    animation: glowEffect 2s infinite alternate ease-in-out;
+}
+
+/* Hover Effect for Both Dropdowns */
+.filter-dropdown:hover, #theme-selector:hover {
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 25px var(--secondary-color);
+}
+
+/* Dropdown Options (Fix for Readability) */
+.filter-dropdown option, #theme-selector option {
+    background: black;
+    color: var(--text-color);
+}
+
+/* Glowing Animation */
+@keyframes glowEffect {
+    0% {
+        box-shadow: 0 0 5px rgba(0, 255, 204, 0.3);
+    }
+    100% {
+        box-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--secondary-color);
+    }
+}
+/* Fix Canvas Display & Scaling */
+#artCanvas {
+    width: 800px; /* Ensure fixed width */
+    height: 600px; /* Ensure fixed height */
+    display: block;
+    margin: 20px auto; /* Center it */
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+}
+
+/* Make Canvas Responsive on Smaller Screens */
+@media (max-width: 900px) {
+    #artCanvas {
+        width: 90%;  /* Adjust width for smaller screens */
+        height: auto; /* Keep aspect ratio */
+    }
+}
+#particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: black; /* Keeps it dark for cyberpunk effect */
+}
+/* 🎚️ Remix Section - Cyberpunk Styled */
+.remix-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 255, 204, 0.15); /* ✅ Subtle neon glow */
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px #00ffcc, 0 0 20px rgba(0, 255, 204, 0.4);
+}
+
+/* 🎚️ Remix Dropdown (Effect Selection) */
+.remix-form select.remix-dropdown {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 2px solid #00ffcc;
+    background: black !important; /* ✅ Force black background */
+    color: #00ffcc !important; /* ✅ Neon cyan text */
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+/* 🔥 Ensuring Options Inside Dropdown Are Visible */
+.remix-form select.remix-dropdown option {
+    background: black !important;  /* ✅ Ensures options have a black background */
+    color: #00ffcc !important;     /* ✅ Ensures neon cyan text */
+    padding: 8px;
+    font-size: 14px;
+}
+
+/* ✨ Neon Glow Effect on Hover */
+.remix-form select.remix-dropdown:hover,
+.remix-form select.remix-dropdown:focus {
+    background: rgba(0, 255, 204, 0.3);
+    box-shadow: 0 0 15px #00ffcc, 0 0 30px #00ffcc;
+}
+
+/* 🎚️ Intensity Slider (Cyberpunk Themed) */
+.intensity-slider {
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    height: 8px;
+    border-radius: 5px;
+    background: rgba(0, 255, 204, 0.3);
+    box-shadow: 0 0 10px #00ffcc;
+    outline: none;
+    transition: 0.2s ease-in-out;
+}
+
+/* 🎚️ Customize Slider Thumb */
+.intensity-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #00ffcc;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 15px #00ffcc, 0 0 30px rgba(0, 255, 204, 0.6);
+}
+
+.intensity-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #00ffcc;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+
+/* Remix Section */
+.remix-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    background: rgba(0, 255, 204, 0.1);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+}
+
+/* Remix Dropdown - Styled Like the Filter Dropdown */
+.remix-section select {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #00ffcc;
+    background: rgba(0, 0, 0, 0.8);
+    color: #00ffcc;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.remix-section select:hover {
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+/* Remix Button - Neon Cyberpunk Look */
+.remix-button {
+    background: rgba(0, 255, 204, 0.3);
+    border: 2px solid #00ffcc;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+}
+
+.remix-button:hover {
+    background: rgba(0, 255, 204, 0.5);
+    box-shadow: 0 0 12px #00ffcc, 0 0 20px #00ffcc;
+}
+/* Cyberpunk Cursor */
+body {
+    cursor: none; /* Hide default cursor */
+}
+
+/* Default Cyberpunk Teal Cursor */
+[data-theme="default"] {
+    --cursor-color: #00ffcc;  /* Teal */
+    --cursor-glow: rgba(0, 255, 204, 0.8);
+}
+
+/* Cyberpunk Blue Cursor */
+[data-theme="blue"] {
+    --cursor-color: #0099ff;  /* Electric Blue */
+    --cursor-glow: rgba(0, 153, 255, 0.8);
+}
+
+/* Neon Pink Cursor */
+[data-theme="pink"] {
+    --cursor-color: #ff00ff;  /* Hot Pink */
+    --cursor-glow: rgba(255, 0, 255, 0.8);
+}
+
+/* Tech Green Cursor */
+[data-theme="green"] {
+    --cursor-color: #00ff00;  /* Bright Green */
+    --cursor-glow: rgba(0, 255, 0, 0.8);
+}
+
+/* Custom Cursor */
+#customCursor {
+    position: fixed;
+    width: 12px;
+    height: 12px;
+    background: var(--cursor-color);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 10px var(--cursor-glow), 0 0 20px var(--cursor-glow);
+    transition: transform 0.1s ease-out, opacity 0.3s ease-out, background 0.5s ease, box-shadow 0.5s ease;
+    z-index: 10000;
+}
+
+/* Cursor Trail Effect */
+.cursor-trail {
+    position: fixed;
+    width: 6px;
+    height: 6px;
+    background: var(--cursor-color);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow: 0 0 5px var(--cursor-glow);
+    animation: fadeOut 0.5s linear;
+    z-index: 9999;
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0; transform: scale(2); opacity: 0; }
+}
+/* Default (Cyberpunk Teal) – Used if no theme is set */
+:root {
+    --cursor-color: #00ffcc;
+    --cursor-glow: rgba(0, 255, 204, 0.8);
+}
+
+/* Cyberpunk Blue */
+[data-theme="blue"] {
+    --cursor-color: #0099ff;
+    --cursor-glow: rgba(0, 153, 255, 0.8);
+}
+
+/* Neon Pink */
+[data-theme="pink"] {
+    --cursor-color: #ff00ff;
+    --cursor-glow: rgba(255, 0, 255, 0.8);
+}
+
+/* Tech Green */
+[data-theme="green"] {
+    --cursor-color: #00ff00;
+    --cursor-glow: rgba(0, 255, 0, 0.8);
+}
+/* Cyberpunk Clock Container */
+#cyberclock-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+    text-align: center;
+    z-index: 999;
+}
+
+/* Cyberpunk Clock Display */
+#cyberclock {
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--secondary-color);
+}
+
+/* Clock Glow Animation */
+@keyframes clockGlow {
+    0% { text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--secondary-color); }
+    50% { text-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color); }
+    100% { text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--secondary-color); }
+}
+
+#cyberclock {
+    animation: clockGlow 1.5s infinite alternate ease-in-out;
+}
+/* 🕷️ SCARY CYBERPUNK LOADING SCREEN */
+#loading-screen {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 99999;
+    text-align: center;
+    animation: flickerScreen 2s infinite alternate;
+}
+
+/* FLICKERING BACKGROUND */
+@keyframes flickerScreen {
+    0% { background: rgba(0, 0, 0, 0.9); }
+    100% { background: rgba(0, 0, 0, 1); }
+}
+
+/* HACKED TEXT ANIMATION */
+.loading-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    color: red;
+    text-shadow: 0 0 15px red, 0 0 30px darkred;
+    opacity: 0;
+    animation: textAppear 2s ease-in-out forwards, flickerText 1s infinite alternate;
+}
+
+/* GLITCHING SUBTEXT */
+#loading-subtext {
+    font-size: 1rem;
+    color: white;
+    opacity: 0.8;
+    animation: glitchEffect 0.15s infinite alternate;
+}
+
+/* TEXT FLICKER EFFECT */
+@keyframes flickerText {
+    0% { text-shadow: 0 0 5px red, 0 0 10px darkred; }
+    100% { text-shadow: 0 0 10px red, 0 0 20px darkred; }
+}
+
+/* TEXT APPEARS AFTER DELAY */
+@keyframes textAppear {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+/* RANDOM GLITCH MOVEMENT */
+@keyframes glitchEffect {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(2px, -2px); }
+    50% { transform: translate(-2px, 2px); }
+    75% { transform: translate(1px, -1px); }
+    100% { transform: translate(0, 0); }
+}
+.card img {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card img:hover {
+    transform: scale(1.05) rotateY(10deg);
+    box-shadow: 0 0 20px var(--primary-color);
+}
+/* General styles for download arrows */
+.download-arrow {
+    position: absolute;
+    font-size: 22px; /* Adjusted for better visibility */
+    color: var(--primary-color); /* Matches your theme */
+    text-decoration: none;
+    background: rgba(0, 0, 0, 0.6); /* Dark cyberpunk glow */
+    padding: 8px;
+    border-radius: 50%;
+    transition: opacity 0.3s ease-in-out, transform 0.2s ease;
+}
+
+/* 🎨 Fixing Image Download Arrow */
+.card {
+    position: relative;
+    display: inline-block;
+}
+
+.card .download-arrow {
+    top: 10px;
+    right: 10px;
+    opacity: 0;
+    transform: scale(0.9);
+}
+
+.card:hover .download-arrow {
+    opacity: 1;
+    transform: scale(1);
+}
+.audio-card {
+    position: relative;
+}
+
+.audio-card .download-arrow {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    opacity: 1;
+    font-size: 22px; /* Keep size consistent with image arrows */
+    z-index: 10;
+}
+/* 🎚️ Force Remix Section to Follow Theme */
+.remix-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    padding: 15px;
+    background: var(--secondary-color) !important;  /* ✅ Force background */
+    border: 2px solid var(--primary-color) !important;  /* ✅ Force border */
+    color: var(--text-color) !important;  /* ✅ Force text color */
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+
+/* 🎚️ Ensure Remix Dropdown Matches Theme */
+.remix-form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 2px solid var(--primary-color) !important;
+    background: var(--background-color) !important; /* ✅ Use theme background */
+    color: var(--text-color) !important;
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 0 10px var(--primary-color);
+}
+
+/* 🎚️ Force Remix Button to Match Theme */
+.remix-button {
+    background: var(--secondary-color) !important;
+    border: 2px solid var(--primary-color) !important;
+    color: var(--text-color) !important;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+}
+
+/* ✨ Hover Effect */
+.remix-button:hover {
+    background: var(--primary-color) !important;
+    box-shadow: 0 0 12px var(--primary-color), 0 0 20px var(--secondary-color);
+}
+/* 🎚️ Remix Section - Full Theme Compliance */
+.remix-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 12px;
+    background: var(--secondary-color) !important;  /* ✅ Force background */
+    border: 2px solid var(--primary-color) !important;  /* ✅ Force border */
+    color: var(--text-color) !important;  /* ✅ Force text color */
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+}
+
+/* 🎚️ Default Cyberpunk Teal Theme (Unchanged Styling) */
+:root select[id^="effect-selector"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 15px;
+    border: 2px solid #00ffcc; /* Cyberpunk Teal */
+    background: black; /* Dark Background */
+    color: #00ffcc; /* Neon Cyan Text */
+    border-radius: 5px;
+    text-align: center;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    box-shadow: 0 0 10px #00ffcc;
+}
+
+/* 🎚️ Cyberpunk Blue Theme */
+[data-theme="blue"] select[id^="effect-selector"] {
+    border: 2px solid #00aaff; /* Electric Blue */
+    background: rgba(0, 26, 51, 0.8); /* Dark Blue Background */
+    color: #cceeff; /* Light Blue Text */
+    box-shadow: 0 0 10px #00aaff;
+}
+
+/* 🎚️ Neon Pink Theme */
+[data-theme="pink"] select[id^="effect-selector"] {
+    border: 2px solid #ff00ff; /* Neon Pink */
+    background: rgba(51, 0, 51, 0.8); /* Dark Pink Background */
+    color: #ffccff; /* Light Pink Text */
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+/* 🎚️ Tech Green Theme */
+[data-theme="green"] select[id^="effect-selector"] {
+    border: 2px solid #00ff00; /* Bright Green */
+    background: rgba(0, 51, 0, 0.8); /* Dark Green Background */
+    color: #ccffcc; /* Light Green Text */
+    box-shadow: 0 0 10px #00ff00;
+}
+
+/* 🎚️ Ensure Dropdown Options Follow Theme */
+[data-theme="blue"] select[id^="effect-selector"] option,
+[data-theme="pink"] select[id^="effect-selector"] option,
+[data-theme="green"] select[id^="effect-selector"] option {
+    background: var(--background-color);
+    color: var(--text-color);
+}
+
+/* ✨ Glow Effect for Hover (Only for Non-Teal Themes) */
+[data-theme="blue"] select[id^="effect-selector"]:hover,
+[data-theme="pink"] select[id^="effect-selector"]:hover,
+[data-theme="green"] select[id^="effect-selector"]:hover {
+    background: var(--primary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+}
+/* Cyberpunk Modal Background */
+.cyberpunk-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Modal Box */
+.modal-content {
+    background: black;
+    padding: 20px;
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 0 20px var(--primary-color), 0 0 40px var(--secondary-color);
+    text-align: center;
+    border-radius: 10px;
+    width: 400px;
+    animation: flickerEffect 0.8s infinite alternate ease-in-out;
+}
+
+/* Modal Heading */
+.modal-content h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: red;
+    text-shadow: 0 0 10px red, 0 0 20px darkred;
+    margin-bottom: 15px;
+}
+
+/* Modal Message */
+.modal-content p {
+    color: var(--text-color);
+    font-size: 16px;
+}
+
+/* Buttons */
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+/* Danger Button */
+.danger-btn {
+    background: red;
+    border: 2px solid darkred;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.danger-btn:hover {
+    background: darkred;
+    box-shadow: 0 0 10px red, 0 0 20px darkred;
+}
+
+/* Button Glow Effect */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    background: var(--secondary-color);
+    box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--secondary-color);
+}
+
+/* Flickering Effect */
+@keyframes flickerEffect {
+    0% { opacity: 1; }
+    50% { opacity: 0.8; }
+    100% { opacity: 1; }
+}
+/* Cyberpunk Delete Confirmation Modal */
+.cyberpunk-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 15px red, 0 0 30px rgba(255, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 10000;
+    display: none; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show Modal */
+.cyberpunk-modal.active {
+    display: block;
+    opacity: 1;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Delete Button - Cyberpunk Red */
+.danger-btn {
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid #ff0000;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+}
+
+/* Hover Effect for Delete */
+.danger-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 12px red, 0 0 20px rgba(255, 0, 0, 0.7);
+}
+/* Cyberpunk Delete Confirmation Modal */
+.cyberpunk-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ff0000;
+    box-shadow: 0 0 15px red, 0 0 30px rgba(255, 0, 0, 0.5);
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    z-index: 10000;
+    display: none; /* Initially hidden */
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Show Modal */
+.cyberpunk-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Modal Buttons */
+.modal-buttons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Delete Button - Cyberpunk Red */
+.danger-btn {
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid #ff0000;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    text-transform: uppercase;
+}
+
+/* Hover Effect for Delete */
+.danger-btn:hover {
+    background: rgba(255, 0, 0, 0.5);
+    box-shadow: 0 0 12px red, 0 0 20px rgba(255, 0, 0, 0.7);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

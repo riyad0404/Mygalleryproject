@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Files</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <style>
+        /* Cyberpunk Background */
+        body {
+            background: radial-gradient(circle, rgba(0, 255, 204, 0.1), rgba(0, 255, 204, 0.3));
+            background-blend-mode: overlay;
+            color: #00ffcc;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+        }
+        h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #00ffcc;
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    position: relative;
+    text-shadow:
+        0 0 2px #00ffcc,
+        0 0 4px #00ffcc,
+        0 0 6px rgba(0, 255, 204, 0.8);
+}
+
+
+
+
+        /* Upload Form */
+        .upload-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.6);
+            width: 320px;
+        }
+
+        .file-label {
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: none;
+            background: rgba(0, 255, 204, 0.2);
+            color: #fff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .file-input:hover {
+            background: rgba(0, 255, 204, 0.4);
+        }
+
+        /* Upload Button */
+        .btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(0, 255, 204, 0.3);
+            border: 2px solid #00ffcc;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 204, 0.5);
+            box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+
+        /* Floating Particles */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: #00ffcc;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 5s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-200px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Cyberpunk Particles -->
+    <div class="particles"></div>
+
+    <div class="container">
+        <h1>Upload Files</h1>
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            <label for="image" class="file-label">Upload Image:</label>
+            <input type="file" name="image" id="image" class="file-input">
+
+            <label for="audio" class="file-label">Upload Audio:</label>
+            <input type="file" name="audio" id="audio" class="file-input">
+
+            <button type="submit" class="btn">Upload</button>
+        </form>
+    </div>
+
+    <script>
+        // Generate Floating Particles for Cyberpunk Vibe
+        const particlesContainer = document.querySelector(".particles");
+
+        function createParticle() {
+            const particle = document.createElement("div");
+            particle.classList.add("particle");
+            particle.style.left = Math.random() * 100 + "vw";
+            particle.style.top = Math.random() * 100 + "vh";
+            particle.style.animationDuration = Math.random() * 5 + 3 + "s";
+            particle.style.width = Math.random() * 5 + 2 + "px";
+            particle.style.height = particle.style.width;
+            particlesContainer.appendChild(particle);
+
+            setTimeout(() => {
+                particle.remove();
+            }, 5000);
+        }
+
+        setInterval(createParticle, 150);
+        // Create the main custom cursor
+const cursor = document.createElement("div");
+cursor.id = "customCursor";
+document.body.appendChild(cursor);
+
+// Ensure cursor appears on page load
+document.addEventListener("DOMContentLoaded", () => {
+    cursor.style.opacity = "1"; // Ensure it's visible
+});
+
+// Move cursor with the mouse
+document.addEventListener("mousemove", (e) => {
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
+    cursor.style.opacity = "1"; // Make sure it's not hidden
+});
+
+// Create neon cursor trail effect
+document.addEventListener("mousemove", (e) => {
+    let trail = document.createElement("div");
+    trail.classList.add("cursor-trail");
+    trail.style.left = `${e.clientX}px`;
+    trail.style.top = `${e.clientY}px`;
+    document.body.appendChild(trail);
+
+    // Remove trail after animation
+    setTimeout(() => trail.remove(), 500);
+});
+
+// Hide cursor when not moving
+let lastMove = Date.now();
+setInterval(() => {
+    if (Date.now() - lastMove > 1000) {
+        cursor.style.opacity = "0";
+    }
+}, 1000);
+
+document.addEventListener("mousemove", () => {
+    cursor.style.opacity = "1";
+    lastMove = Date.now();
+});
+
+    </script>
+</body>
+</html>

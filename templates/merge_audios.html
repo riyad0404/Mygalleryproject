@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Merge Audios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <style>
+        /* Merge Audios Form */
+        .merge-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            max-width: 500px;
+            margin: 20px auto;
+        }
+
+        .merge-form label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #00ffcc;
+        }
+
+        /* Style for the dropdown menu */
+        .merge-form select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #00ffcc;
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.7); /* Dark background */
+            color: #fff; /* White text */
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            appearance: none; /* Remove default arrow */
+            -webkit-appearance: none; /* Remove default arrow for Safari */
+            -moz-appearance: none; /* Remove default arrow for Firefox */
+            cursor: pointer;
+        }
+
+        /* Style for the dropdown arrow */
+        .merge-form select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2300ffcc'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            background-size: 12px;
+        }
+
+        /* Style for dropdown options */
+        .merge-form select option {
+            background: rgba(0, 0, 0, 0.9); /* Dark background for options */
+            color: #fff; /* White text for options */
+        }
+
+        .merge-form button {
+            background: rgba(0, 255, 204, 0.2);
+            border: 2px solid #00ffcc;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .merge-form button:hover {
+            background: rgba(0, 255, 204, 0.4);
+            box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Merge Audios</h1>
+        <div class="nav">
+            <a href="{{ url_for('index') }}" class="btn">Home</a>
+            <a href="{{ url_for('gallery') }}" class="btn">View Gallery</a>
+        </div>
+        <form method="POST" class="merge-form">
+            <label for="audio1">Select First Audio:</label>
+            <select name="audio1" id="audio1" required>
+                {% for audio in audio_files %}
+                    <option value="{{ audio[0] }}">{{ audio[1].split('/')[-1] }}</option>
+                {% endfor %}
+            </select>
+            <label for="audio2">Select Second Audio:</label>
+            <select name="audio2" id="audio2" required>
+                {% for audio in audio_files %}
+                    <option value="{{ audio[0] }}">{{ audio[1].split('/')[-1] }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit">Merge Audios</button>
+        </form>
+    </div>
+<script>
+    // Create the main custom cursor
+    const cursor = document.createElement("div");
+    cursor.id = "customCursor";
+    document.body.appendChild(cursor);
+
+    // Ensure cursor appears on page load
+    document.addEventListener("DOMContentLoaded", () => {
+        cursor.style.opacity = "1"; // Ensure it's visible
+    });
+
+    // Move cursor with the mouse
+    document.addEventListener("mousemove", (e) => {
+        cursor.style.left = `${e.clientX}px`;
+        cursor.style.top = `${e.clientY}px`;
+        cursor.style.opacity = "1"; // Make sure it's not hidden
+    });
+
+    // Create neon cursor trail effect
+    document.addEventListener("mousemove", (e) => {
+        let trail = document.createElement("div");
+        trail.classList.add("cursor-trail");
+        trail.style.left = `${e.clientX}px`;
+        trail.style.top = `${e.clientY}px`;
+        document.body.appendChild(trail);
+
+        // Remove trail after animation
+        setTimeout(() => trail.remove(), 500);
+    });
+
+    // Hide cursor when not moving
+    let lastMove = Date.now();
+    setInterval(() => {
+        if (Date.now() - lastMove > 1000) {
+            cursor.style.opacity = "0";
+        }
+    }, 1000);
+
+    document.addEventListener("mousemove", () => {
+        cursor.style.opacity = "1";
+        lastMove = Date.now();
+    });
+</script>
+
+
+</body>
+</html>

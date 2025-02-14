@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Art Tool</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <style>
+        body {
+            background: black;
+
+
+        }
+
+        /* Main Art Canvas */
+        canvas {
+            border: 2px solid #00ffcc;
+            border-radius: 10px;
+            background: rgba(0, 255, 255, 0.1);
+            margin: 20px auto;
+            display: block;
+            box-shadow: 0 0 20px #00ffcc;
+            transition: box-shadow 0.5s ease-in-out;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            text-align: center;
+            margin: 20px;
+        }
+
+        .toolbar button, .toolbar input {
+            margin: 5px;
+            background: rgba(0, 255, 204, 0.2);
+            border: 2px solid #00ffcc;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toolbar button:hover {
+            background: rgba(0, 255, 204, 0.4);
+            box-shadow: 0 0 10px #00ffcc, 0 0 20px #00ffcc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Art Tool</h1>
+        <div class="nav">
+            <a href="{{ url_for('index') }}" class="btn">Home</a>
+            <a href="{{ url_for('gallery') }}" class="btn">View Gallery</a>
+        </div>
+        <div class="toolbar">
+
+
+            <button onclick="setMode('paint')">Brush Mode</button>
+            <button onclick="setMode('erase')">Eraser Mode</button>
+            <button onclick="setMode('drag')">Move Shapes</button>
+            <button onclick="addShape('circle')">Add Circle</button>
+            <button onclick="addShape('square')">Add Square</button>
+            <button onclick="addShape('triangle')">Add Triangle</button>
+            <input type="color" id="colorPicker" value="#00ffcc">
+            <input type="range" id="brushSize" min="1" max="10" value="3">
+            <button onclick="saveCanvas()">Save Canvas</button>
+            <button onclick="clearCanvas()">Clear Canvas</button>
+            <select id="backgroundSelector" class="btn" onchange="setBackgroundEffect(this.value)">
+    <option value="rain">Rain</option>
+    <option value="glitch">Glitch</option>
+    <option value="neonGrid">Neon Grid</option>
+    <option value="scanlines">Scanlines</option>
+    <option value="none">None</option>
+</select>
+
+
+        </div>
+        <canvas id="artCanvas" width="800" height="600"></canvas>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('artCanvas');
+        const ctx = canvas.getContext('2d');
+        let brushStrokes = []; // Store drawn brush paths
+
+        let shapes = [];
+        let trails = [];
+        let selectedShape = null;
+        let mode = 'drag'; // Default mode
+        let currentBackgroundEffect = "rain"; // Default background effect
+let backgroundEffects = ["rain", "glitch", "neonGrid", "scanlines", "none"]; // List of effects
+let backgroundIndex = 0;
+
+        let isDrawing = false;
+
+        // 🌧 Rain Effect
+function drawRainEffect() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "rgba(0, 255, 204, 0.3)";
+    for (let i = 0; i < 100; i++) {
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let length = Math.random() * 15 + 5;
+        ctx.fillRect(x, y, 2, length);
+    }
+}
+
+// ⚡ Glitch Effect
+function drawGlitchEffect() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < 10; i++) {
+        let x = Math.random() * canvas.width;
+        let y = Math.random() * canvas.height;
+        let width = Math.random() * 50 + 10;
+        let height = 3;
+        ctx.fillStyle = `rgba(${Math.random() * 255}, 255, 204, 0.5)`;
+        ctx.fillRect(x, y, width, height);
+    }
+}
+
+// 🔲 Neon Grid Effect
+function drawNeonGridEffect() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = "rgba(0, 255, 204, 0.4)";
+    ctx.lineWidth = 1.5;
+    for (let x = 0; x < canvas.width; x += 50) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+    for (let y = 0; y < canvas.height; y += 50) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+}
+
+// 📺 Scanlines Effect
+function drawScanlinesEffect() {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    for (let y = 0; y < canvas.height; y += 4) {
+        ctx.fillStyle = "rgba(0, 255, 204, 0.2)";
+        ctx.fillRect(0, y, canvas.width, 1);
+    }
+}
+
+
+
+
+        function setMode(newMode) {
+            mode = newMode;
+        }
+
+        function addShape(type) {
+            const color = document.getElementById('colorPicker').value;
+            const shape = { type, x: 100, y: 100, size: 50, color };
+            shapes.push(shape);
+            drawCanvas();
+        }
+
+       function drawCanvas() {
+    applyBackgroundEffect();
+    brushStrokes.forEach(stroke => drawStroke(stroke));
+    trails.forEach(trail => drawShape(trail, true));
+    shapes.forEach(shape => drawShape(shape, false));
+}
+function drawStroke(stroke) {
+    if (stroke.path.length < 2) return;
+
+    ctx.strokeStyle = stroke.color;
+    ctx.lineWidth = stroke.size;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+
+    for (let i = 0; i < stroke.path.length; i++) {
+        const { x, y } = stroke.path[i];
+        if (i === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+    }
+
+    ctx.stroke();
+}
+
+
+        function applyBackgroundEffect() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous background
+
+    switch (currentBackgroundEffect) {
+        case "rain":
+            drawRainEffect();
+            break;
+        case "glitch":
+            drawGlitchEffect();
+            break;
+        case "neonGrid":
+            drawNeonGridEffect();
+            break;
+        case "scanlines":
+            drawScanlinesEffect();
+            break;
+        case "none":
+            ctx.fillStyle = "black"; // No background, keep black
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            break;
+    }
+}
+
+       function cycleBackgroundEffect() {
+    backgroundIndex = (backgroundIndex + 1) % backgroundEffects.length;
+    currentBackgroundEffect = backgroundEffects[backgroundIndex];
+
+
+    // Update the dropdown menu selection
+    document.getElementById("backgroundSelector").value = currentBackgroundEffect;
+
+    drawCanvas();
+}
+function setBackgroundEffect(effect) {
+    currentBackgroundEffect = effect;
+    drawCanvas(); // Apply new background
+}
+
+
+
+
+
+
+        function drawShape(shape, isTrail) {
+            ctx.shadowBlur = isTrail ? 10 : 15;
+            ctx.shadowColor = shape.color;
+            ctx.fillStyle = shape.color;
+
+            if (shape.type === 'circle') {
+                ctx.beginPath();
+                ctx.arc(shape.x, shape.y, shape.size / 2, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (shape.type === 'square') {
+                ctx.fillRect(shape.x - shape.size / 2, shape.y - shape.size / 2, shape.size, shape.size);
+            } else if (shape.type === 'triangle') {
+                ctx.beginPath();
+                ctx.moveTo(shape.x, shape.y - shape.size / 2);
+                ctx.lineTo(shape.x - shape.size / 2, shape.y + shape.size / 2);
+                ctx.lineTo(shape.x + shape.size / 2, shape.y + shape.size / 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+
+            ctx.shadowBlur = 0;
+        }
+
+        // Mouse events for painting, erasing, and dragging
+       canvas.addEventListener('mousedown', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    if (mode === 'paint' || mode === 'erase') {
+        isDrawing = true;
+        const color = mode === 'paint' ? document.getElementById('colorPicker').value : "black";
+        const size = document.getElementById('brushSize').value;
+
+        // Start a new stroke path
+        brushStrokes.push({ path: [{ x, y }], color, size });
+    } else if (mode === 'drag') {
+        shapes.forEach(shape => {
+            if (x > shape.x - shape.size / 2 && x < shape.x + shape.size / 2 &&
+                y > shape.y - shape.size / 2 && y < shape.y + shape.size / 2) {
+                selectedShape = shape;
+            }
+        });
+    }
+});
+
+
+        canvas.addEventListener('mousemove', (e) => {
+    if (isDrawing) {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Add points to the latest brush stroke path
+        brushStrokes[brushStrokes.length - 1].path.push({ x, y });
+
+        drawCanvas();
+    } else if (selectedShape && mode === 'drag') {
+        const rect = canvas.getBoundingClientRect();
+        selectedShape.x = e.clientX - rect.left;
+        selectedShape.y = e.clientY - rect.top;
+        drawCanvas();
+    }
+});
+
+
+       canvas.addEventListener('mouseup', () => {
+    isDrawing = false;
+    selectedShape = null;
+});
+
+
+        function clearCanvas() {
+    shapes = [];
+    trails = [];
+    brushStrokes = []; // Clear stored brush strokes
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    applyBackgroundEffect();
+}
+
+
+        function saveCanvas() {
+            const link = document.createElement('a');
+            link.download = 'cyberpunk_art.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+ // Create the main custom cursor
+const cursor = document.createElement("div");
+cursor.id = "customCursor";
+document.body.appendChild(cursor);
+
+// Ensure cursor appears on page load
+document.addEventListener("DOMContentLoaded", () => {
+    cursor.style.opacity = "1"; // Ensure it's visible
+});
+
+// Move cursor with the mouse
+document.addEventListener("mousemove", (e) => {
+    cursor.style.left = `${e.clientX}px`;
+    cursor.style.top = `${e.clientY}px`;
+    cursor.style.opacity = "1"; // Make sure it's not hidden
+});
+
+// Create neon cursor trail effect
+document.addEventListener("mousemove", (e) => {
+    let trail = document.createElement("div");
+    trail.classList.add("cursor-trail");
+    trail.style.left = `${e.clientX}px`;
+    trail.style.top = `${e.clientY}px`;
+    document.body.appendChild(trail);
+
+    // Remove trail after animation
+    setTimeout(() => trail.remove(), 500);
+});
+
+// Hide cursor when not moving
+let lastMove = Date.now();
+setInterval(() => {
+    if (Date.now() - lastMove > 1000) {
+        cursor.style.opacity = "0";
+    }
+}, 1000);
+
+document.addEventListener("mousemove", () => {
+    cursor.style.opacity = "1";
+    lastMove = Date.now();
+});
+
+    </script>
+</body>
+</html>
